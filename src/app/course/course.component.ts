@@ -28,4 +28,7 @@ export class CourseComponent implements OnInit {
                 this.course = course;
             });
     }
+    hasViewPermission(): boolean {
+        return this.user.is_teacher;
+    }
 }
