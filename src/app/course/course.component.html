@@ -19,7 +19,7 @@
         <td>{{ course?.start_date | date: 'LLL. dd, YYYY, hh:MM a' || 'No Date'}}</td>
         <td>{{ course?.end_date | date: 'LLL. dd, YYYY, hh:MM a' || 'No Date'}}</td>
         <td >
-            <a class="btn btn-primary mr-3" *ngIf="hasViewPermission()"
+            <a class="btn btn-primary mr-3" *ngIf="user?.is_teacher"
                [routerLink]="['admin']">Dashboard</a>
         </td>
     </tr>
