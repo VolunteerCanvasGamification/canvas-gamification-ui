@@ -4,6 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {CourseRegistration, User} from '@app/_models';
 import {CourseDashboardServiceService} from "@app/course/_services/course-dashboard.service";
 import {ToastrService} from "ngx-toastr";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
     selector: 'app-course-dashboard',
@@ -15,13 +16,15 @@ export class CourseDashboardComponent implements OnInit {
     courseId: number;
     user: User;
     userList: User[];
+    unregisteredUsers: User[];
     registrationList: CourseRegistration[];
     variable: boolean;
 
     constructor(private authenticationService: AuthenticationService,
                 private courseService: CourseDashboardServiceService,
                 private toastr: ToastrService,
-                private route: ActivatedRoute) {
+                private route: ActivatedRoute,
+                private modalService: NgbModal) {
         this.authenticationService.currentUser.subscribe(user => this.user = user);
         this.courseId = this.route.snapshot.params.courseId;
     }
@@ -39,6 +42,11 @@ export class CourseDashboardComponent implements OnInit {
                 this.registrationList = registrations;
             });
 
+        this.courseService
+            .getUnregistered(this.courseId)
+            .subscribe( users=> {
+                this.unregisteredUsers = users;
+            });
     }
 
     updateBlockStatus(courseReg: CourseRegistration): void {
@@ -63,6 +71,10 @@ export class CourseDashboardComponent implements OnInit {
                 this.toastr.error(error);
                 console.warn(error);
             });
+    }
+
+    open(content: unknown): void {
+        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', centered: true, scrollable: true, size : "xl"});
     }
 
 

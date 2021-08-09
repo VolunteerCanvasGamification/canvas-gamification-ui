@@ -35,6 +35,13 @@ export class CourseDashboardServiceService {
             .pipe(catchError(this.apiService.handleError<CourseRegistration[]>('Error occurred while fetching database', null)));
     }
 
+    getUnregistered(course: number): Observable<User[]>{
+
+
+        return this.http
+            .get<User[]>()
+    }
+
     updateBlockStatus(courseReg: CourseRegistration): Observable<CourseRegistration> {
         const url = this.apiService.getURL('course-registration', courseReg.id);
         return this.http.put<CourseRegistration>(url, courseReg)
