@@ -15,3 +15,8 @@ export interface CourseRegistrationRequest {
     student_number?: number | string;
     code?: number;
 }
+
+export interface CourseAdminRegistrationRequest {
+    name?: string;
+    student_number?: number | string;
+}

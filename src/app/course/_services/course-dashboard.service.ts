@@ -36,10 +36,14 @@ export class CourseDashboardServiceService {
     }
 
     getUnregistered(course: number): Observable<User[]>{
+        const url = this.apiService.getURL('course-unregistered');
 
+        const params = new HttpParams()
+            .set('course', String(course));
 
         return this.http
-            .get<User[]>()
+            .get<User[]>(url,{params})
+            .pipe(catchError(this.apiService.handleError<User[]>('Error occurred while fetching database', null)));
     }
 
     updateBlockStatus(courseReg: CourseRegistration): Observable<CourseRegistration> {

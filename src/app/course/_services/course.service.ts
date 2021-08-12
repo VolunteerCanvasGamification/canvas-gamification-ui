@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {
     APIResponse,
-    Course,
+    Course, CourseAdminRegistrationRequest,
     CourseRegistrationRequest,
     CourseRegistrationResponse,
     RegistrationStatus
@@ -33,6 +33,16 @@ export class CourseService {
     // TODO: Handling error of this function needs refactoring
     // Error message should be sent from here
     register(courseId: number, data: CourseRegistrationRequest): Observable<CourseRegistrationResponse> {
+        const url = this.apiService.getURL('course', courseId, 'register');
+        return this.http
+            .post<CourseRegistrationResponse>(url, data)
+            .pipe(catchError(this.apiService.handleError<CourseRegistrationResponse>('', {
+                success: false,
+                bad_request: true
+            })));
+    }
+
+    adminRegister(courseId: number, data: CourseAdminRegistrationRequest): Observable<CourseRegistrationResponse> {
         const url = this.apiService.getURL('course', courseId, 'register');
         return this.http
             .post<CourseRegistrationResponse>(url, data)

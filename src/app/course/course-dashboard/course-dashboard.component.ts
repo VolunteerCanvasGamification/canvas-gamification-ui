@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '@app/_services/api/authentication';
 import {ActivatedRoute} from '@angular/router';
-import {CourseRegistration, User} from '@app/_models';
+import {CourseAdminRegistrationRequest, CourseRegistration, CourseRegistrationRequest, User} from '@app/_models';
 import {CourseDashboardServiceService} from "@app/course/_services/course-dashboard.service";
 import {ToastrService} from "ngx-toastr";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -71,6 +71,16 @@ export class CourseDashboardComponent implements OnInit {
                 this.toastr.error(error);
                 console.warn(error);
             });
+    }
+
+    register(userInput: User): void {
+        const data = this.retrieveFormData();
+    }
+
+    retrieveFormData(): CourseAdminRegistrationRequest {
+        return {
+            name: this.user.first_name + this.user.last_name || null,
+        };
     }
 
     open(content: unknown): void {

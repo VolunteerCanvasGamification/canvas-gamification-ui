@@ -33,7 +33,31 @@
         </button>
     </div>
     <div class="modal-body">
-
+        <table class="table table-bordered table-light mt-5 hover-shadow">
+            <caption>List of Students not enrolled</caption>
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Username</th>
+                <th scope="col">Role</th>
+                <th scope="col">Register:</th>
+            </tr>
+            </thead>
+            <tbody *ngFor="let user of unregisteredUsers; let i = index">
+            <tr>
+                <td>{{ user.email}}</td>
+                <td>{{ user.first_name || 'No first name' }}</td>
+                <td>{{ user.last_name || 'No last name' }}</td>
+                <td>{{ user.username}}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <button type="button" class="btn btn-outline-dark" (click)="register(user)">Toggle status</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <div class="modal-footer">
     </div>
