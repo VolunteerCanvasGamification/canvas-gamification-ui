@@ -7,7 +7,7 @@ import {ToastrService} from "ngx-toastr";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Subject} from "rxjs";
 import {AbstractControl, FormBuilder, FormGroup} from "@angular/forms";
-import {CourseDashboardForm, CourseDashboardRegForm} from "@app/course/_forms/course-dashboard.form";
+import {CourseDashboardForm} from "@app/course/_forms/course-dashboard.form";
 import {debounceTime, distinctUntilChanged} from "rxjs/operators";
 import {AdminService} from "@app/_services/api/admin.service";
 import {CourseService} from "@app/course/_services/course.service";
@@ -46,7 +46,6 @@ export class CourseDashboardComponent implements OnInit {
 
     userCourseList: User[];
     courseRegId: number;
-    regQueryString;
     courseNamesList: Course[];
 
     constructor(private builder: FormBuilder,
@@ -59,7 +58,6 @@ export class CourseDashboardComponent implements OnInit {
                 private modalService: NgbModal) {
         this.authenticationService.currentUser.subscribe(user => this.user = user);
         this.formGroup = CourseDashboardForm.createForm();
-        this.formGroupReg = CourseDashboardRegForm.createForm();
         this.courseId = this.route.snapshot.params.courseId;
         this.paramChanged.pipe(debounceTime(300), distinctUntilChanged()).subscribe(options => {
             this.courseDashboardService.getCourseDashboardFilter(options, this.courseId).subscribe(users => this.userList = users);
