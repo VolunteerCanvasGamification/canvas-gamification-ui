@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '@app/_services/api/authentication';
 import {ActivatedRoute} from '@angular/router';
-import {Course, CourseRegistration, User} from '@app/_models';
+import {CourseRegistration, User} from '@app/_models';
 import {CourseDashboardServiceService} from "@app/course/_services/course-dashboard.service";
 import {ToastrService} from "ngx-toastr";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -81,7 +81,6 @@ export class CourseDashboardComponent implements OnInit {
             .subscribe(registrations => {
                 this.registrationList = registrations;
             });
-
     }
 
     changeStatus(courseReg: CourseRegistration, blockStatus: boolean, verifyStatus: boolean): void {
@@ -109,7 +108,7 @@ export class CourseDashboardComponent implements OnInit {
             });
     }
 
-    getBlockStatus(id: number):boolean {
+    getBlockStatus(id: number): boolean {
         return this.registrationList.filter(reg => reg.user_id === id)[0].is_blocked;
     }
 
