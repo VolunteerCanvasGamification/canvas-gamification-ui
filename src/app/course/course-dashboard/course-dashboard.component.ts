@@ -6,7 +6,12 @@ import {CourseDashboardServiceService} from "@app/course/_services/course-dashbo
 import {ToastrService} from "ngx-toastr";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Subject} from "rxjs";
-import {PageEvent} from "@angular/material/paginator";
+import {AbstractControl, FormBuilder, FormGroup} from "@angular/forms";
+import {CourseDashboardForm, CourseDashboardRegForm} from "@app/course/_forms/course-dashboard.form";
+import {debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {AdminService} from "@app/_services/api/admin.service";
+import {CourseService} from "@app/course/_services/course.service";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
     selector: 'app-course-dashboard',
@@ -15,61 +20,78 @@ import {PageEvent} from "@angular/material/paginator";
 })
 
 export class CourseDashboardComponent implements OnInit {
+    courseList: MatTableDataSource<Course>;
+    formGroup: FormGroup;
+    formGroupReg: FormGroup;
     courseId: number;
     userId: number;
     user: User;
 
     userList: User[];
     registrationList: CourseRegistration[];
+    allUsers: User[];
     variable: boolean;
 
     filterQueryString;
 
     pageSize: number;
-    pageEvent: PageEvent;
 
     paramChanged: Subject<{
-        page: number,
-        page_size: number,
-        search: string,
-        parentCategory: string,
-        subCategory: string,
-        difficulty: string,
-        is_sample: string,
-        ordering: string
+        search: string;
+        courseId: number;
     }> = new Subject<{
-        page: number,
-        page_size: number,
-        search: string,
-        parentCategory: string,
-        subCategory: string,
-        difficulty: string,
-        is_sample: string,
-        ordering: string
+        search: string;
+        courseId: number;
     }>();
 
-    constructor(private authenticationService: AuthenticationService,
-                private courseService: CourseDashboardServiceService,
+    userCourseList: User[];
+    courseRegId: number;
+    regQueryString;
+    courseNamesList: Course[];
+
+    constructor(private builder: FormBuilder,
+                private adminService: AdminService,
+                private courseService: CourseService,
+                private authenticationService: AuthenticationService,
+                private courseDashboardService: CourseDashboardServiceService,
                 private toastr: ToastrService,
                 private route: ActivatedRoute,
                 private modalService: NgbModal) {
         this.authenticationService.currentUser.subscribe(user => this.user = user);
+        this.formGroup = CourseDashboardForm.createForm();
+        this.formGroupReg = CourseDashboardRegForm.createForm();
         this.courseId = this.route.snapshot.params.courseId;
+        this.paramChanged.pipe(debounceTime(300), distinctUntilChanged()).subscribe(options => {
+            this.courseDashboardService.getCourseDashboardFilter(options, this.courseId).subscribe(users => this.userList = users);
+        });
+
+    }
+
+    get form(): { [p: string]: AbstractControl } {
+        return this.formGroup.controls;
     }
 
     ngOnInit(): void {
-        this.courseService
+
+        this.courseDashboardService
             .getCourseDashboard(this.courseId)
             .subscribe(users => {
                 this.userList = users;
             });
 
-        this.courseService
+        this.courseDashboardService
             .getCourseRegistration(this.courseId)
             .subscribe(registrations => {
                 this.registrationList = registrations;
             });
 
+        this.courseDashboardService
+            .getUnregisteredUsers(this.courseId, (this.courseNamesList).length)
+            .subscribe(users => {
+                this.allUsers = users;
+            });
+
+        console.log(this.allUsers);
     }
 
     changeStatus(courseReg: CourseRegistration, blockStatus: boolean, verifyStatus: boolean): void {
@@ -83,10 +105,10 @@ export class CourseDashboardComponent implements OnInit {
             available_tokens: courseReg.available_tokens,
             user_id: courseReg.user_id,
         };
-        this.courseService.updateBlockStatus(updatedCourseRegistration)
+        this.courseDashboardService.updateBlockStatus(updatedCourseRegistration)
             .subscribe(() => {
-                this.toastr.success('The block status has been changed successfully.');
-                this.courseService
+                this.toastr.success('The action was performed successfully.');
+                this.courseDashboardService
                     .getCourseRegistration(this.courseId)
                     .subscribe(registrations => {
                         this.registrationList = registrations;
@@ -106,14 +128,19 @@ export class CourseDashboardComponent implements OnInit {
     }
 
     open(content: unknown): void {
-        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', centered: true, scrollable: true, size : "xl"});
+        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', centered: true, scrollable: true});
     }
 
-    unregisterUser(courseRegId:number): void {
-        this.courseService.unregisterUser(courseRegId)
+    permission(content: unknown, regId: number): void {
+        this.courseRegId = regId;
+        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', centered: true});
+    }
+
+    unregisterUser(): void {
+        this.courseDashboardService.unregisterUser(this.courseRegId)
             .subscribe(() => {
-                this.toastr.success('The block has been changed successfully.');
-                this.courseService
+                this.toastr.success('The user has been unregistered.');
+                this.courseDashboardService
                     .getCourseDashboard(this.courseId)
                     .subscribe(users => {
                         this.userList = users;
@@ -126,16 +153,17 @@ export class CourseDashboardComponent implements OnInit {
 
     update(): void {
         const options = {
-            ...(this.pageEvent && {
-                page: this.pageEvent.pageIndex + 1,
-                page_size: this.pageEvent.pageSize,
-            }),
-            ...this.filterQueryString
+            ...this.filterQueryString,
         };
         this.paramChanged.next(options);
     }
 
     hasViewPermission(userId: number): boolean {
         return this.user.is_teacher || !!this.registrationList.find(course => course.canvas_user_id === userId);
+    }
+
+    applyFilter(): void {
+        this.filterQueryString = this.formGroup.value;
+        this.update();
     }
 }
