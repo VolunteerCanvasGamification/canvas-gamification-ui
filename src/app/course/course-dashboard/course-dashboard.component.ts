@@ -86,7 +86,7 @@ export class CourseDashboardComponent implements OnInit {
             });
 
         this.courseDashboardService
-            .getUnregisteredUsers(this.courseId, (this.courseNamesList).length)
+            .getUnregisteredUsers(this.courseId)
             .subscribe(users => {
                 this.allUsers = users;
             });
