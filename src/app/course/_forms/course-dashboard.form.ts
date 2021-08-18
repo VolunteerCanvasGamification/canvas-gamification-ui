@@ -7,7 +7,7 @@ export class CourseDashboardForm {
     static createForm(): FormGroup {
         const builder = new FormBuilder();
         return builder.group({
-            search: new FormControl('')
+            name: new FormControl('')
         });
     }
 
@@ -21,5 +21,5 @@ export class CourseDashboardForm {
 }
 
 export interface CourseDashboardFormData {
-    search: string,
+    name: string,
 }

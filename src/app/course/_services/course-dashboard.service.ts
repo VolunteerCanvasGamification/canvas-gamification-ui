@@ -51,10 +51,10 @@ export class CourseDashboardServiceService {
     getCourseDashboardFilter(options?: CourseDashboardFormData, id?: number): Observable<User[]> {
         const url = this.apiService.getURL('list-course-user');
         const {
-            search = '',
+            name = '',
         } = options ? options : {};
         const params = new HttpParams()
-            .set('search', search)
+            .set('search', name)
             .set('canvascourseregistration__course__id', String(id));
 
         return this.http.get<User[]>(url, {params})

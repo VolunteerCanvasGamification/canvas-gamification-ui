@@ -1,9 +1,9 @@
 <form [formGroup]="formGroup" (ngSubmit)="applyFilter()">
     <div class="form-row">
         <div class="form-group col-3">
-            <label for="search">Search in Username:</label>
-            <input type="text" class="form-control" name="search" formControlName="search" id="search"
-                   placeholder="Search a username..">
+            <label for="name">Search First Name and Last Name:</label>
+            <input type="text" class="form-control" name="name" formControlName="name" id="name"
+                   placeholder="Search a name...">
         </div>
         <div class="form-group col-1 mt-auto">
             <button type="submit" class="btn btn-primary float-right">Go</button>

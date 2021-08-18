@@ -29,7 +29,6 @@ export class CourseDashboardComponent implements OnInit {
 
     userList: User[];
     registrationList: CourseRegistration[];
-    allUsers: User[];
     variable: boolean;
 
     filterQueryString;
@@ -37,10 +36,10 @@ export class CourseDashboardComponent implements OnInit {
     pageSize: number;
 
     paramChanged: Subject<{
-        search: string;
+        name: string;
         courseId: number;
     }> = new Subject<{
-        search: string;
+        name: string;
         courseId: number;
     }>();
 
