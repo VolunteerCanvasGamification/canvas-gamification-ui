@@ -123,7 +123,7 @@ export class CourseDashboardComponent implements OnInit {
 
     permission(content: unknown, regId: number): void {
         this.courseRegId = regId;
-        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', centered: true});
+        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-permission', centered: true});
     }
 
     unregisterUser(): void {
