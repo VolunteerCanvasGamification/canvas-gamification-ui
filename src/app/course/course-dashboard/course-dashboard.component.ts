@@ -83,13 +83,6 @@ export class CourseDashboardComponent implements OnInit {
                 this.registrationList = registrations;
             });
 
-        this.courseDashboardService
-            .getUnregisteredUsers(this.courseId)
-            .subscribe(users => {
-                this.allUsers = users;
-            });
-
-        console.log(this.allUsers);
     }
 
     changeStatus(courseReg: CourseRegistration, blockStatus: boolean, verifyStatus: boolean): void {

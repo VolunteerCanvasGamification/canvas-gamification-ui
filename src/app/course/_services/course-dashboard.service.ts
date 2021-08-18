@@ -36,16 +36,6 @@ export class CourseDashboardServiceService {
             .pipe(catchError(this.apiService.handleError<CourseRegistration[]>('Error occurred while fetching database', null)));
     }
 
-    getUnregisteredUsers(options: number): Observable<User[]> {
-        const url = this.apiService.getURL('list-course-user');
-        const params = new HttpParams()
-            .set('canvascourseregistration__course__id', String(options));
-
-        return this.http
-            .get<User[]>(url, {params})
-            .pipe(catchError(this.apiService.handleError<User[]>('Error occurred while fetching database', null)));
-    }
-
     updateBlockStatus(courseReg: CourseRegistration): Observable<CourseRegistration> {
         const url = this.apiService.getURL('course-registration', courseReg.id);
         return this.http.put<CourseRegistration>(url, courseReg)
